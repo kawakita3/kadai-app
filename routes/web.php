@@ -87,4 +87,4 @@ Route::put('follow/{id}',[FollowController::class, 'update']);
 Route::get('/signup', [UserController::class, 'create']);
 
 /** 新規登録処理 */
-Route::post('/singup', [UserController::class, 'store']);
+Route::post('/signup', [UserController::class, 'store']);

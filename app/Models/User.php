@@ -10,6 +10,7 @@ use App\Models\Post;
 class User extends Model
 {
     use HasFactory;
+    protected $fillable = ['name','email','password'];
 
     /**
      * ユーザーの投稿を取得する

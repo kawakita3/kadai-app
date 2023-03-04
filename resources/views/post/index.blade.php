@@ -16,13 +16,26 @@
     <div class="page post-page">
         <form class="form" action="/post" method="post">
             @csrf
-            <textarea name="postContent" id="" cols="30" rows="5" placeholder="いまどうしてる?"></textarea>
+            <textarea name="postContent" id="content" cols="30" rows="5" placeholder="いまどうしてる?"></textarea>
             <div class="post-button">
-                <button class="button-white" type="submit">投稿する</button>
+                <button class="button-white" onclick="valid()" type="submit">投稿する</button>
             </div>
         </form>
+        <div>
+            @foreach($errors->all() as $error)
+                <p style="color:red;">{{$error}}</p>
+            @endforeach
+        </div>
     </div>
 </body>
+<script>
+    const valid = () => {
+        let content = document.getElementById("content").value;
+        if (content.length <= 0 || content.length >= 140) {
+            alert("１文字以上１４０文字以下で入力してください")
+        }
+    }
+</script>
 <script src="{{ asset('/js/app.js') }}"></script>
 <style scoped>
     .post-page .form {

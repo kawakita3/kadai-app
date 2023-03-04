@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Post;
 use App\Http\Controllers\Controller,
     Session;
+use Illuminate\Support\Facades\Validator;
 
 class PostController extends Controller
 {
@@ -37,6 +38,22 @@ class PostController extends Controller
 
         // ログイン中のユーザーの情報を取得する
         $loginUser = Session::get('user');
+
+        // バリデーション
+        $rulus = [
+            'postContent' => [ 'between:1,140' ]
+          ];
+        $message = [
+            'postContent.between' => '１文字以上１４０文字以下で入力してください'
+          ];
+        
+        $validator = Validator::make($request->all(), $rulus, $message);
+        
+        if ($validator->fails()) {
+            return redirect('/post')
+            ->withErrors($validator)
+            ->withInput();
+        }
 
         // データ登録
         $post = new Post;
@@ -119,6 +136,15 @@ class PostController extends Controller
         }
         // セッションにログイン情報があるか確認
         if (!Session::exists('user')) {
+            return redirect('/');
+        }
+
+        // ログイン中のユーザーの情報を取得する
+        $loginUser = Session::get('user');
+        // 投稿者を取得する
+        $user = $post->user();
+        // 自分自身の投稿ページか判定
+        if ($loginUser->id != $user->id) {
             return redirect('/');
         }
 

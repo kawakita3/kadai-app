@@ -18,6 +18,7 @@
         <div class="page-title">ホーム</div>
         <div class="post-list">
             @foreach ($posts as $post)
+            @if ( !$post['post']->is_deleted)
             <div class="post">
                 <a href="/user/{{ $post['user']->id }}">
                     <img class="user-icon" src="{{ asset('/img/user_icon.png') }}" alt="" />
@@ -38,6 +39,7 @@
                     </a>
                 </div>
             </div>
+            @endif
             @endforeach
         </div>
     </div>

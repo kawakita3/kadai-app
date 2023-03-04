@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller,
     Session;
 use App\Models\User;
+use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
@@ -114,7 +115,8 @@ class UserController extends Controller
      */
     public function create()
     {
-        return view('user.signup');
+        $errorMessage = null;
+        return view('user.signup',compact('errorMessage'));
     }
 
     /**
@@ -124,6 +126,49 @@ class UserController extends Controller
     {
         //TODO 登録処理
 
+        // バリデーション
+        $rules = [
+            'email' => [ 'required', 
+            'regex:/^[a-zA-Z0-9_.+-]+@([a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9]*\.)+[a-zA-Z]{2,}$/' ],
+            'password' => 'regex:/[a-zA-Z0-9_.+-]+/'
+            // 'email' => [ 'required | email:filter' ],
+          ];
+        $message = [
+            'email.required' => 'メールアドレスを入力してください',
+            'email.regex' => 'メールアドレスを正しく入力してください',
+            'password.regex' => 'パスワード（半額英数字記号、８文字以上）を正しく入力してください'
+          ];
+        
+        $validator = Validator::make($request->all(), $rules, $message);
+        
+        if ($validator->fails()) {
+            // return view('user.signup')
+            // return view('user.signup',compact('errorMessage'))
+            return redirect('/signup')
+            ->withErrors($validator)
+            ->withInput();
+        }
+
+        // $user = new User;
+        $user = User::where('email', $request->email)->first();
+
+        // 入力されたメアドが存在するか確認
+        if ($user != null) {
+            $errorMessage = 'このメールアドレスはすでに使用されています';
+            return view('user.signup',compact('errorMessage'));
+        }
+
+        // データ登録
+        $user = new User;
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->password = $request->password;
+        $user->save();
+
+        // 成功
+        Session::put('user', $user);
+
+        $errorMessage = null;
         return redirect('/');
     }
 }

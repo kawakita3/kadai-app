@@ -23,6 +23,7 @@
                 <div class="content">{{ $post->content }}</div>
                 <div class="time-stamp">{{ $post->created_at }}</div>
             </a>
+            @if(Session::get('user')->id === $user->id)
             <div class="menu">
                 <div class="menu-item font-blue">
                     <a href="/post/edit/{{ $post->id }}">編集</a>
@@ -34,6 +35,7 @@
                     </div>
                 </form>
             </div>
+            @endif
         </div>
     </div>
 </body>
